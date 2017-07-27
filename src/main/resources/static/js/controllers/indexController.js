@@ -112,6 +112,7 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
 
 app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams, serviceAPI, $interval, $cookieStore, $location, AuthService, http, $rootScope, $window, $route) {
     $('#side-menu').metisMenu();
+    $('#side-menu-with-pr').metisMenu();
 
 
     $scope.adminRole = "ADMIN";
@@ -147,7 +148,31 @@ app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams,
             });
     }
 
+    function env() {
+        http.get($cookieStore.get('URL') + '/env')
+            .success(function (response) {
+                //console.log(response);
+                //$scope.env1 = response;
+                var appConfig = "";
+                for (var key in response) {
+                    if (key.startsWith("applicationConfig: [file:")) {
+                        appConfig = key;
+                    }
+                }
+                defaultUrl = response[appConfig]['nfvo.package-repository.ip'] + ":" +
+                    response[appConfig]['nfvo.package-repository.port'];
+                $scope.defaultUrl = defaultUrl;
+                $scope.ipadd = response[appConfig]['nfvo.package-repository.ip']
+                newloadTable();
+                NSDTable();
+                getVersion();
 
+            })
+            .error(function (response, status) {
+                showError(response, status);
+            });
+    }
+    env();
 
     function loadCurrentUser() {
         http.get(url + '/users/current')
@@ -319,7 +344,7 @@ app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams,
     };
 
     if ($scope.logged)
-        //console.log('Ok Logged');
+    //console.log('Ok Logged');
         $location.replace();
     $scope.username = $cookieStore.get('userName');
 
@@ -499,7 +524,7 @@ app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams,
             console.log('Status: ' + status + ' Data: ' + JSON.stringify(data));
             $scope.alerts.push({
                 type: 'danger',
-                msg: data.message 
+                msg: data.message
             });
         }
 
@@ -549,12 +574,12 @@ app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams,
                 highlight: "#15BA67",
                 label: "Availaible"
             },
-            {
-                value: $scope.quota.total.ram - $scope.quota.left.ram,
-                color: "#B22222",
-                highlight: "#15BA67",
-                label: "Used"
-            }
+                {
+                    value: $scope.quota.total.ram - $scope.quota.left.ram,
+                    color: "#B22222",
+                    highlight: "#15BA67",
+                    label: "Used"
+                }
 
             ]
             if ($scope.quota.total.ram === 0) {
@@ -572,12 +597,12 @@ app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams,
                 highlight: "#15BA67",
                 label: "Availaible"
             },
-            {
-                value: $scope.quota.total.instances - $scope.quota.left.instances,
-                color: "#B22222",
-                highlight: "#15BA67",
-                label: "Used"
-            }
+                {
+                    value: $scope.quota.total.instances - $scope.quota.left.instances,
+                    color: "#B22222",
+                    highlight: "#15BA67",
+                    label: "Used"
+                }
 
             ]
 
@@ -596,12 +621,12 @@ app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams,
                 highlight: "#15BA67",
                 label: "Availaible"
             },
-            {
-                value: $scope.quota.total.cores - $scope.quota.left.cores,
-                color: "#B22222",
-                highlight: "#15BA67",
-                label: "Used"
-            }
+                {
+                    value: $scope.quota.total.cores - $scope.quota.left.cores,
+                    color: "#B22222",
+                    highlight: "#15BA67",
+                    label: "Used"
+                }
 
             ]
 
@@ -620,12 +645,12 @@ app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams,
                 highlight: "#15BA67",
                 label: "Availaible"
             },
-            {
-                value: $scope.quota.total.floatingIps - $scope.quota.left.floatingIps,
-                color: "#B22222",
-                highlight: "#15BA67",
-                label: "Used"
-            }
+                {
+                    value: $scope.quota.total.floatingIps - $scope.quota.left.floatingIps,
+                    color: "#B22222",
+                    highlight: "#15BA67",
+                    label: "Used"
+                }
 
             ]
 
@@ -668,60 +693,60 @@ app.controller('IndexCtrl', function ($document, $scope, $compile, $routeParams,
 
     };
 
-        $("input[type=password]").keyup(function(){
-            var ucase = new RegExp("[A-Z]+");
-            var lcase = new RegExp("[a-z]+");
-            var num = new RegExp("[0-9]+");
+    $("input[type=password]").keyup(function(){
+        var ucase = new RegExp("[A-Z]+");
+        var lcase = new RegExp("[a-z]+");
+        var num = new RegExp("[0-9]+");
 
-            if($("#newPassword").val().length >= 8){
-                $("#8char").removeClass("glyphicon-remove");
-                $("#8char").addClass("glyphicon-ok");
-                $("#8char").css("color","#00A41E");
-            }else{
-                $("#8char").removeClass("glyphicon-ok");
-                $("#8char").addClass("glyphicon-remove");
-                $("#8char").css("color","#FF0004");
-            }
+        if($("#newPassword").val().length >= 8){
+            $("#8char").removeClass("glyphicon-remove");
+            $("#8char").addClass("glyphicon-ok");
+            $("#8char").css("color","#00A41E");
+        }else{
+            $("#8char").removeClass("glyphicon-ok");
+            $("#8char").addClass("glyphicon-remove");
+            $("#8char").css("color","#FF0004");
+        }
 
-            if(ucase.test($("#newPassword").val())){
-                $("#ucase").removeClass("glyphicon-remove");
-                $("#ucase").addClass("glyphicon-ok");
-                $("#ucase").css("color","#00A41E");
-            }else{
-                $("#ucase").removeClass("glyphicon-ok");
-                $("#ucase").addClass("glyphicon-remove");
-                $("#ucase").css("color","#FF0004");
-            }
+        if(ucase.test($("#newPassword").val())){
+            $("#ucase").removeClass("glyphicon-remove");
+            $("#ucase").addClass("glyphicon-ok");
+            $("#ucase").css("color","#00A41E");
+        }else{
+            $("#ucase").removeClass("glyphicon-ok");
+            $("#ucase").addClass("glyphicon-remove");
+            $("#ucase").css("color","#FF0004");
+        }
 
-            if(lcase.test($("#newPassword").val())){
-                $("#lcase").removeClass("glyphicon-remove");
-                $("#lcase").addClass("glyphicon-ok");
-                $("#lcase").css("color","#00A41E");
-            }else{
-                $("#lcase").removeClass("glyphicon-ok");
-                $("#lcase").addClass("glyphicon-remove");
-                $("#lcase").css("color","#FF0004");
-            }
+        if(lcase.test($("#newPassword").val())){
+            $("#lcase").removeClass("glyphicon-remove");
+            $("#lcase").addClass("glyphicon-ok");
+            $("#lcase").css("color","#00A41E");
+        }else{
+            $("#lcase").removeClass("glyphicon-ok");
+            $("#lcase").addClass("glyphicon-remove");
+            $("#lcase").css("color","#FF0004");
+        }
 
-            if(num.test($("#newPassword").val())){
-                $("#num").removeClass("glyphicon-remove");
-                $("#num").addClass("glyphicon-ok");
-                $("#num").css("color","#00A41E");
-            }else{
-                $("#num").removeClass("glyphicon-ok");
-                $("#num").addClass("glyphicon-remove");
-                $("#num").css("color","#FF0004");
-            }
+        if(num.test($("#newPassword").val())){
+            $("#num").removeClass("glyphicon-remove");
+            $("#num").addClass("glyphicon-ok");
+            $("#num").css("color","#00A41E");
+        }else{
+            $("#num").removeClass("glyphicon-ok");
+            $("#num").addClass("glyphicon-remove");
+            $("#num").css("color","#FF0004");
+        }
 
-            if(($("#newPassword").val() == $("#newPassword1").val() )&& $("#newPassword").val() !='' && $("#newPassword1").val()!='' ){
-                $("#pwmatch").removeClass("glyphicon-remove");
-                $("#pwmatch").addClass("glyphicon-ok");
-                $("#pwmatch").css("color","#00A41E");
-            }else{
-                $("#pwmatch").removeClass("glyphicon-ok");
-                $("#pwmatch").addClass("glyphicon-remove");
-                $("#pwmatch").css("color","#FF0004");
-            }
-        });
+        if(($("#newPassword").val() == $("#newPassword1").val() )&& $("#newPassword").val() !='' && $("#newPassword1").val()!='' ){
+            $("#pwmatch").removeClass("glyphicon-remove");
+            $("#pwmatch").addClass("glyphicon-ok");
+            $("#pwmatch").css("color","#00A41E");
+        }else{
+            $("#pwmatch").removeClass("glyphicon-ok");
+            $("#pwmatch").addClass("glyphicon-remove");
+            $("#pwmatch").css("color","#FF0004");
+        }
+    });
 
 });
