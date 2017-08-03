@@ -51,7 +51,7 @@ var app = angular.module('app').controller('prController', function ($scope, ser
 
     function newloadTable() {
         if (angular.isUndefined($routeParams.name) && angular.isUndefined($routeParams.vendor)) {
-            $http.get("http://" + defaultUrl + "/api/v1/vnf-packages/defaults")
+            $http.get("http://" + defaultUrl + "/api/v1/vnf-packages/noversion/")
                 .success(function (response) {
                     $scope.VNFPackages = response;
 
